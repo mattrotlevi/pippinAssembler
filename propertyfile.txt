@@ -1,0 +1,4 @@
+#File locations
+#Mon Mar 12 15:55:30 EDT 2018
+ExecutableDirectory=C\:/Users/MatthewR/eclipse-workspace/FinalProject/
+SourceDirectory=C\:/Users/MatthewR/eclipse-workspace/FinalProject/

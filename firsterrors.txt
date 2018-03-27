@@ -1,0 +1,79 @@
+				String line = scan.nextLine();
+				lineNumber++;
+				if(blankLine && line.trim().length() > 0) {
+					error.append("there was a blank line on line: " + tempLine);
+					retVal = tempLine;
+				}
+				else if(line.trim().length() == 0) {
+					blankLine = true;
+					tempLine = lineNumber;
+				}
+				if((line.charAt(0) == ' ' || line.charAt(0) == '\t')) {
+					error.append("there can't be a blank space before instructions");
+					retVal = lineNumber;
+				}
+				if(line.trim().toUpperCase().equals("DATA") && readingCode) {
+					readingCode = false;
+				}
+				if(!line.trim().equals("DATA")) {
+					error.append("not in uppercase");
+					retVal = lineNumber;
+				}
+				if(line.trim().equals("DATA") && readingCode == false) {
+					error.append("after DATA declaration 'DATA' was found again");
+					retVal = lineNumber;
+				}
+				if(readingCode) {
+					String[] parts = line.trim().split("\\s+");
+					if(!Instruction.opcodes.containsKey(parts[0])) {
+						error.append("opcode not present in the instruction");
+						retVal = lineNumber;
+					}
+					else if(parts[0].toUpperCase() != parts[0]) {
+						error.append("opcode is not in capitals");
+						retVal = lineNumber;
+					}
+					if(Assembler.noArgument.contains(parts[0])) {
+						if(parts.length>1) {
+							error.append("argument given after a noarg instruction");
+							retVal = lineNumber;
+						}
+					}
+					else {
+						try {
+							int flags = 0;
+							if(parts[1].charAt(0) == '#'){
+								flags = 2;
+								parts[1] = parts[1].substring(1);
+							}
+							else if(parts[1].charAt(0) == '@'){
+								flags = 4;
+								parts[1] = parts[1].substring(1);
+							}
+							else if(parts[1].charAt(0) == '&'){
+								flags = 6;
+								parts[1] = parts[1].substring(1);
+							}
+							int arg = Integer.parseInt(parts[1],16);
+							int opPart =  8*Instruction.opcodes.get(parts[0]) + flags;
+							//correct parity again
+							opPart += Instruction.numOnes(opPart)%2;
+							new Instruction((byte)opPart,arg);
+						}catch(NumberFormatException e) {
+							error.append("\nError on line " + (lineNumber+1) + 
+									": argument is not a hex number");
+							retVal = lineNumber + 1;	
+						}
+					}
+				}
+				else {
+					try {
+						String[] parts = line.trim().split("\\s+");
+						int address = Integer.parseInt(parts[0],16);
+						int value = Integer.parseInt(parts[1],16);	
+					}catch(NumberFormatException e) {
+						error.append("\nError on line " + (lineNumber+1) + 
+								": data has non-numeric memory address");
+							retVal = lineNumber + 1;
+					}
+				}
