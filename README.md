@@ -1,4 +1,4 @@
-"# Pippin Assembler" 
+# PIPPIN Assembler 
 
 This is a PIPPIN Assembler written in Java for a school final project. It is an assembler that takes in .pasm files, reads it in and catches errors either with the mneumonic or the syntax. 
 
